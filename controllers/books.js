@@ -14,12 +14,14 @@ const getAllBooks = async (req, res) => {
 
 const getSingleBook = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid book ID format.' });
+    }
     const bookId = new ObjectId(req.params.id);
-    const result = await getDb().collection('books').find({ _id: bookId });
-    const books = await result.toArray();
-    if (books.length > 0) {
+    const book = await getDb().collection('books').findOne({ _id: bookId });
+    if (book) {
       res.setHeader('Content-Type', 'application/json');
-      res.status(200).json(books[0]);
+      res.status(200).json(book);
     } else {
       res.status(404).json({ message: 'Book not found' });
     }
@@ -56,6 +58,9 @@ const createBook = async (req, res) => {
 
 const updateBook = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid book ID format.' });
+    }
     const bookId = new ObjectId(req.params.id);
     const book = {
       title: req.body.title,
@@ -80,6 +85,9 @@ const updateBook = async (req, res) => {
 
 const deleteBook = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid book ID format.' });
+    }
     const bookId = new ObjectId(req.params.id);
     const response = await getDb().collection('books').deleteOne({ _id: bookId });
     if (response.deletedCount > 0) {

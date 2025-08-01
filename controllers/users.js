@@ -14,12 +14,14 @@ const getAllUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid user ID format.' });
+    }
     const userId = new ObjectId(req.params.id);
-    const result = await getDb().collection('users').find({ _id: userId });
-    const users = await result.toArray();
-    if (users.length > 0) {
+    const user = await getDb().collection('users').findOne({ _id: userId });
+    if (user) {
       res.setHeader('Content-Type', 'application/json');
-      res.status(200).json(users[0]);
+      res.status(200).json(user);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
@@ -53,6 +55,9 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid user ID format.' });
+    }
     const userId = new ObjectId(req.params.id);
     const user = {
       firstName: req.body.firstName,
@@ -74,6 +79,9 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid user ID format.' });
+    }
     const userId = new ObjectId(req.params.id);
     const response = await getDb().collection('users').deleteOne({ _id: userId });
     if (response.deletedCount > 0) {

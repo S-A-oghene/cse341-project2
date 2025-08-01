@@ -5,7 +5,7 @@ const doc = {
     title: 'My Library API',
     description: 'An API for managing users and books in a library.',
   },
-  host: 'cse341-project2-tpp9.onrender.com',
+  host: 'cse341-project2-s4wq.onrender.com',
   schemes: ['https'],
 };
 
