@@ -8,7 +8,8 @@ const getAllBooks = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(books);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err); // Log the full error for debugging
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -26,7 +27,8 @@ const getSingleBook = async (req, res) => {
       res.status(404).json({ message: 'Book not found' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -52,7 +54,8 @@ const createBook = async (req, res) => {
       res.status(500).json({ message: 'Some error occurred while creating the book.' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -79,7 +82,8 @@ const updateBook = async (req, res) => {
       res.status(404).json({ message: 'Book not found or data is the same' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -96,7 +100,8 @@ const deleteBook = async (req, res) => {
       res.status(404).json({ message: 'Book not found' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 

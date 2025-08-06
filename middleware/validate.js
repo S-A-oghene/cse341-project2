@@ -4,22 +4,22 @@ const userValidationRules = () => {
   return [
     body('firstName').isString().notEmpty().withMessage('First name is required.'),
     body('lastName').isString().notEmpty().withMessage('Last name is required.'),
-    body('email').isEmail().withMessage('Must be a valid email address.'),
-    body('favoriteColor').isString().notEmpty().withMessage('Favorite color is required.'),
-    body('birthday').isISO8601().toDate().withMessage('Birthday must be a valid date.'),
+    body('email').isEmail().withMessage('A valid email is required.'),
+    body('favoriteColor').optional().isString(),
+    body('birthday').optional().isDate().withMessage('Birthday must be a valid date.')
   ];
 };
 
 const bookValidationRules = () => {
   return [
-    body('title').isString().notEmpty().withMessage('Title is required.'),
-    body('author').isString().notEmpty().withMessage('Author is required.'),
-    body('publicationYear').isInt({ min: 1000, max: new Date().getFullYear() }).withMessage('Publication year must be a valid year.'),
-    body('genre').isString().notEmpty().withMessage('Genre is required.'),
-    body('isbn').isISBN().withMessage('Must be a valid ISBN.'),
-    body('pages').isInt({ min: 1 }).withMessage('Pages must be a positive number.'),
-    body('summary').isString().notEmpty().withMessage('Summary is required.'),
-    body('language').optional().isString().withMessage('Language must be a string.'),
+    body('title').isString().notEmpty().withMessage('Title is required and must be a string.'),
+    body('author').isString().notEmpty().withMessage('Author is required and must be a string.'),
+    body('publicationYear').isInt({ min: 1000, max: new Date().getFullYear() }).withMessage('A valid publication year is required.'),
+    body('isbn').isISBN().withMessage('A valid ISBN is required.'),
+    body('genre').optional().isString(),
+    body('pages').optional().isInt({ min: 1 }),
+    body('summary').optional().isString(),
+    body('language').optional().isString()
   ];
 };
 
