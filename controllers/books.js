@@ -1,10 +1,9 @@
-const { getDb } = require('../db/connect');
 const { ObjectId } = require('mongodb');
+const Book = require('../models/bookModel');
 
 const getAllBooks = async (req, res) => {
   try {
-    const result = await getDb().collection('books').find();
-    const books = await result.toArray();
+    const books = await Book.find();
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(books);
   } catch (err) {
@@ -18,8 +17,7 @@ const getSingleBook = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid book ID format.' });
     }
-    const bookId = new ObjectId(req.params.id);
-    const book = await getDb().collection('books').findOne({ _id: bookId });
+    const book = await Book.findById(req.params.id);
     if (book) {
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(book);
@@ -34,25 +32,12 @@ const getSingleBook = async (req, res) => {
 
 const createBook = async (req, res) => {
   try {
-    const book = {
-      title: req.body.title,
-      author: req.body.author,
-      publicationYear: req.body.publicationYear,
-      genre: req.body.genre,
-      isbn: req.body.isbn,
-      pages: req.body.pages,
-      summary: req.body.summary,
-      language: req.body.language,
-    };
-    const response = await getDb().collection('books').insertOne(book);
-    if (response.acknowledged) {
-      res.status(201).json({
-        message: 'Book created successfully',
-        bookId: response.insertedId,
-      });
-    } else {
-      res.status(500).json({ message: 'Some error occurred while creating the book.' });
-    }
+    const newBook = new Book(req.body);
+    const savedBook = await newBook.save();
+    res.status(201).json({
+      message: 'Book created successfully',
+      bookId: savedBook._id
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An internal server error occurred.' });
@@ -64,19 +49,8 @@ const updateBook = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid book ID format.' });
     }
-    const bookId = new ObjectId(req.params.id);
-    const book = {
-      title: req.body.title,
-      author: req.body.author,
-      publicationYear: req.body.publicationYear,
-      genre: req.body.genre,
-      isbn: req.body.isbn,
-      pages: req.body.pages,
-      summary: req.body.summary,
-      language: req.body.language,
-    };
-    const response = await getDb().collection('books').replaceOne({ _id: bookId }, book);
-    if (response.modifiedCount > 0) {
+    const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (updatedBook) {
       res.status(204).send();
     } else {
       res.status(404).json({ message: 'Book not found or data is the same' });
@@ -92,9 +66,8 @@ const deleteBook = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid book ID format.' });
     }
-    const bookId = new ObjectId(req.params.id);
-    const response = await getDb().collection('books').deleteOne({ _id: bookId });
-    if (response.deletedCount > 0) {
+    const deletedBook = await Book.findByIdAndDelete(req.params.id);
+    if (deletedBook) {
       res.status(204).send();
     } else {
       res.status(404).json({ message: 'Book not found' });
