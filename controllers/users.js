@@ -1,14 +1,14 @@
-const { getDb } = require('../db/connect');
 const { ObjectId } = require('mongodb');
+const LibraryUser = require('../models/libraryUserModel');
 
 const getAllUsers = async (req, res) => {
   try {
-    const result = await getDb().collection('users').find();
-    const users = await result.toArray();
+    const users = await LibraryUser.find();
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -17,8 +17,7 @@ const getSingleUser = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid user ID format.' });
     }
-    const userId = new ObjectId(req.params.id);
-    const user = await getDb().collection('users').findOne({ _id: userId });
+    const user = await LibraryUser.findById(req.params.id);
     if (user) {
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(user);
@@ -26,30 +25,22 @@ const getSingleUser = async (req, res) => {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
 const createUser = async (req, res) => {
   try {
-    const user = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      favoriteColor: req.body.favoriteColor,
-      birthday: req.body.birthday,
-    };
-    const response = await getDb().collection('users').insertOne(user);
-    if (response.acknowledged) {
-      res.status(201).json({
-        message: 'User created successfully',
-        userId: response.insertedId,
-      });
-    } else {
-      res.status(500).json({ message: 'Some error occurred while creating the user.' });
-    }
+    const newUser = new LibraryUser(req.body);
+    const savedUser = await newUser.save();
+    res.status(201).json({
+      message: 'User created successfully',
+      userId: savedUser._id
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -58,22 +49,15 @@ const updateUser = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid user ID format.' });
     }
-    const userId = new ObjectId(req.params.id);
-    const user = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      favoriteColor: req.body.favoriteColor,
-      birthday: req.body.birthday,
-    };
-    const response = await getDb().collection('users').replaceOne({ _id: userId }, user);
-    if (response.modifiedCount > 0) {
+    const updatedUser = await LibraryUser.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (updatedUser) {
       res.status(204).send();
     } else {
       res.status(404).json({ message: 'User not found or data is the same' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -82,15 +66,15 @@ const deleteUser = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid user ID format.' });
     }
-    const userId = new ObjectId(req.params.id);
-    const response = await getDb().collection('users').deleteOne({ _id: userId });
-    if (response.deletedCount > 0) {
+    const deletedUser = await LibraryUser.findByIdAndDelete(req.params.id);
+    if (deletedUser) {
       res.status(204).send();
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
