@@ -7,4 +7,5 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ message: 'Unauthorized. Please log in to access this resource.' });
 };
 
+
 module.exports = { isAuthenticated };
