@@ -10,6 +10,16 @@
   "schemes": [
     "https"
   ],
+  "securityDefinitions": {
+    "github_oauth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://github.com/login/oauth/authorize",
+      "flow": "implicit",
+      "scopes": {
+        "read:user": "Read user profile data"
+      }
+    }
+  },
   "paths": {
     "/api-docs/": {
       "get": {
@@ -38,6 +48,24 @@
       },
       "post": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be added to the library",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -82,12 +110,28 @@
       },
       "put": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
         ],
         "responses": {
@@ -107,6 +151,13 @@
       },
       "delete": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -148,6 +199,24 @@
       },
       "post": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Book object that needs to be added to the library",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -192,12 +261,28 @@
       },
       "put": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Book object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
           }
         ],
         "responses": {
@@ -217,6 +302,13 @@
       },
       "delete": {
         "description": "",
+        "security": [
+          {
+            "github_oauth": [
+              "read:user"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -240,6 +332,81 @@
           }
         }
       }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "favoriteColor": {
+          "type": "string",
+          "example": "Blue"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "1990-01-15"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email"
+      ]
+    },
+    "Book": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "The Great Gatsby"
+        },
+        "author": {
+          "type": "string",
+          "example": "F. Scott Fitzgerald"
+        },
+        "publicationYear": {
+          "type": "integer",
+          "example": 1925
+        },
+        "isbn": {
+          "type": "string",
+          "example": "978-0743273565"
+        },
+        "genre": {
+          "type": "string",
+          "example": "Fiction"
+        },
+        "pages": {
+          "type": "integer",
+          "example": 180
+        },
+        "summary": {
+          "type": "string",
+          "example": "A novel about the American dream."
+        },
+        "language": {
+          "type": "string",
+          "example": "English"
+        }
+      },
+      "required": [
+        "title",
+        "author",
+        "publicationYear",
+        "isbn"
+      ]
     }
   }
 }
