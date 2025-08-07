@@ -5,6 +5,3 @@
 .env
 
 # Generated API documentation
-
-# Logs
-npm-debug.log
