@@ -5,10 +5,10 @@
     "description": "An API for managing users and books in a library, with OAuth authentication.",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "cse341-project2-s4wq.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/api-docs/": {
