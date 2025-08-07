@@ -24,7 +24,7 @@
     "/auth/login": {
       "get": {
         "summary": "Log in with GitHub",
-        "description": "Initiates the GitHub OAuth2 login flow. Executing this will redirect you to GitHub to authorize the application. After successful authorization, you will be redirected back here with an active session.",
+        "description": "Initiates the GitHub OAuth2 login flow. **Important:** Do not use the 'Execute' button. Instead, open [this link](https://cse341-project2-s4wq.onrender.com/auth/login) in a new browser tab to log in. After successful authorization, you will be redirected back to this documentation page with an active session.",
         "tags": ["Authentication"],
         "responses": {
           "302": {
@@ -36,7 +36,7 @@
     "/auth/logout": {
       "get": {
         "summary": "Log out",
-        "description": "Logs the current user out and destroys the session. After executing, you will no longer be able to access protected routes.",
+        "description": "Logs the current user out and destroys the session. **Important:** Do not use the 'Execute' button. Instead, open [this link](https://cse341-project2-s4wq.onrender.com/auth/logout) in a new browser tab to log out. After logging out, you will no longer be able to access protected routes.",
         "tags": ["Authentication"],
         "responses": {
           "302": {
