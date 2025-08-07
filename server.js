@@ -2,14 +2,17 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
-const cors = require("cors"); // Add this line
-const { initDb } = require("./db/connect"); // Correctly destructure initDb
+const cors = require("cors"); // Use CORS for cross-origin requests
+const connectDB = require("./db/connect");
 
 // This line executes the passport configuration
 require("./auth/passport-setup");
 
 const port = process.env.PORT || 8080;
 const app = express();
+
+// Connect to Database
+connectDB();
 
 app
   .use(cors()) // Use cors middleware
@@ -39,11 +42,6 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
-initDb((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    app.listen(port);
-    console.log(`Connected to DB and listening on ${port}`);
-  }
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
