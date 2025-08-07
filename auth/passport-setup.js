@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
-const User = require('../models/userModel'); // We will create this model next
+const AuthUser = require('../models/authUserModel');
 
 passport.serializeUser((user, done) => {
   // The user.id here is the MongoDB document _id
@@ -9,7 +9,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
+    const user = await AuthUser.findById(id);
     done(null, user);
   } catch (err) {
     done(err, null);
@@ -27,14 +27,14 @@ passport.use(
       // This function is called after the user authorizes your app on GitHub
       try {
         // Check if user already exists in your DB
-        let user = await User.findOne({ githubId: profile.id });
+        let user = await AuthUser.findOne({ githubId: profile.id });
 
         if (user) {
           // If user exists, return the user
           return done(null, user);
        } else {
           // If not, create a new user in your DB for authentication purposes
-         const newUser = new User({
+         const newUser = new AuthUser({
            githubId: profile.id,
            username: profile.username,
            displayName: profile.displayName,
@@ -49,4 +49,3 @@ passport.use(
    }
  )
 );
-
