@@ -5,7 +5,7 @@
 .env
 
 # Generated API documentation
-swagger.json
+swagger/swagger.json
 
 # Logs
 npm-debug.log
