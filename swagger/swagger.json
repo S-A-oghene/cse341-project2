@@ -7,7 +7,12 @@
   },
   "servers": [
     {
-      "url": "https://cse341-wapa.onrender.com"
+      "url": "https://cse341-project2-s4wq.onrender.com",
+      "description": "Production Server"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
     }
   ],
   "paths": {

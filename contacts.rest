@@ -2,7 +2,7 @@
 # @hostname = http://localhost:8080
 
 # For deployed testing (uncomment this line and comment the one above)
-@hostname = https://cse341-wapa.onrender.com
+@hostname = https://cse341-project2-s4wq.onrender.com
 
 # This variable will hold the ID of the contact we create.
 # You will need to copy/paste the ID from the POST response here.

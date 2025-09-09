@@ -46,19 +46,24 @@ exports.createContact = async (req, res) => {
 };
 
 exports.updateContact = async (req, res) => {
-  const { firstName, lastName, email, favoriteColor, birthday } = req.body;
   try {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid contact ID" });
     }
+    const contactId = new ObjectId(req.params.id);
+    const updateFields = { ...req.body };
+
+    // Ensure there's something to update and remove the _id field if it was passed
+    delete updateFields._id;
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: 'No fields to update provided.' });
+    }
+
     const db = getDb();
     const result = await db
       .db()
       .collection("contacts")
-      .updateOne(
-        { _id: new ObjectId(req.params.id) },
-        { $set: { firstName, lastName, email, favoriteColor, birthday } }
-      );
+      .updateOne({ _id: contactId }, { $set: updateFields });
     if (result.matchedCount === 0)
       return res.status(404).json({ message: "Contact not found" });
     res.status(204).send();
