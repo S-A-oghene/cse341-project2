@@ -1,0 +1,27 @@
+GET https://cse341-wapa.onrender.com/contacts
+
+GET https://cse341-wapa.onrender.com/contacts/6873d156019b599197d6a976
+
+POST https://cse341-wapa.onrender.com/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Bernice",
+  "lastName": "Collins",
+  "email": "bernice.collins@gmail.com",
+  "favoriteColor": "Blue",
+  "birthday": "1990-01-01"
+}
+
+PUT https://cse341-wapa.onrender.com/contacts/6873d156019b599197d6a976
+Content-Type: application/json
+
+{
+  "firstName": "Jessey",
+  "lastName": "Collins",
+  "email": "jessey.collins@gmail.com",
+  "favoriteColor": "Red",
+  "birthday": "1992-02-02"
+}
+
+DELETE https://cse341-wapa.onrender.com/contacts/6873d156019b599197d6a976

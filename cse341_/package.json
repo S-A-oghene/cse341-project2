@@ -1,0 +1,26 @@
+{
+  "name": "cse341",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/S-A-oghene/cse341.git"
+  },
+  "keywords": [],
+  "author": "Eseoghene Gbunoghene",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/S-A-oghene/cse341/issues"
+  },
+  "homepage": "https://github.com/S-A-oghene/cse341#readme",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mongodb": "^6.17.0",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

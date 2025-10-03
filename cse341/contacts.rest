@@ -1,0 +1,49 @@
+# For local testing
+# @hostname = http://localhost:8080
+
+# For deployed testing (uncomment this line and comment the one above)
+@hostname = https://cse341-project2-s4wq.onrender.com
+
+# This variable will hold the ID of the contact we create.
+# You will need to copy/paste the ID from the POST response here.
+@contactId = 68c03c9cff29baf5dccd1178
+
+###
+# 1. Create a new contact
+# @name createContact
+POST {{hostname}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada.lovelace@example.com",
+  "favoriteColor": "Blue",
+  "birthday": "1815-12-10"
+}
+
+###
+# 2. Get all contacts (to see the one you just created)
+# @name getAll
+GET {{hostname}}/contacts
+
+###
+# 3. Get the single contact you just created
+# (Remember to update @contactId above with the ID from the POST response)
+# @name getSingle
+GET {{hostname}}/contacts/{{contactId}}
+
+###
+# 4. Update the contact you just created
+# @name updateContact
+PUT {{hostname}}/contacts/{{contactId}}
+Content-Type: application/json
+
+{
+  "favoriteColor": "Sky Blue"
+}
+
+###
+# 5. Delete the contact you just created
+# @name deleteContact
+DELETE {{hostname}}/contacts/{{contactId}}
