@@ -53,7 +53,7 @@ exports.updateContact = async (req, res) => {
     // Ensure there's something to update and remove the _id field if it was passed
     delete updateFields._id;
     if (Object.keys(updateFields).length === 0) {
-      return res.status(400).json({ message: 'No fields to update provided.' });
+      return res.status(400).json({ message: "No fields to update provided." });
     }
 
     const db = getDb();
