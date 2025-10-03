@@ -3,7 +3,7 @@ const router = express.Router();
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("../swagger/swagger.json");
 
-router.use("/auth", require("./auth"));
+// router.use("/auth", require("./auth")); // Temporarily disabled for Part 1
 
 // Integrate Swagger UI setup directly to avoid require issues
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

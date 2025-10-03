@@ -12,7 +12,7 @@ router.get("/:id", booksController.getSingleBook);
 // Protected routes with validation
 router.post(
   "/",
-  isAuthenticated,
+  // isAuthenticated, // Temporarily disabled for Part 1
   bookValidationRules(),
   validate,
   booksController.createBook
@@ -20,12 +20,12 @@ router.post(
 
 router.put(
   "/:id",
-  isAuthenticated,
+  // isAuthenticated, // Temporarily disabled for Part 1
   bookValidationRules(),
   validate,
   booksController.updateBook
 );
 
-router.delete("/:id", isAuthenticated, booksController.deleteBook);
+router.delete("/:id", /* isAuthenticated, */ booksController.deleteBook); // Temporarily disabled for Part 1
 
 module.exports = router;

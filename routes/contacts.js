@@ -11,18 +11,18 @@ router.get("/:id", contactsController.getSingle);
 // In a real-world app, you might create 'contactValidationRules'.
 router.post(
   "/",
-  isAuthenticated,
+  // isAuthenticated, // Temporarily disabled for Part 1
   contactValidationRules(),
   validate,
   contactsController.createContact
 );
 router.put(
   "/:id",
-  isAuthenticated,
+  // isAuthenticated, // Temporarily disabled for Part 1
   contactValidationRules(),
   validate,
   contactsController.updateContact
 );
-router.delete("/:id", isAuthenticated, contactsController.deleteContact);
+router.delete("/:id", /* isAuthenticated, */ contactsController.deleteContact); // Temporarily disabled for Part 1
 
 module.exports = router;

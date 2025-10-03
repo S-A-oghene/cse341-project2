@@ -6,7 +6,7 @@ const cors = require("cors"); // Use CORS for cross-origin requests
 const { connectDB } = require("./db/connect");
 
 // This line executes the passport configuration
-require("./auth/passport-setup");
+// require("./auth/passport-setup"); // Temporarily disabled for Part 1
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -17,23 +17,23 @@ connectDB();
 app
   .use(cors()) // Use cors middleware
   .use(express.json()) // Use built-in JSON parser instead of body-parser
-  // 1. Session Middleware - This must come before any routes that use authentication
-  .use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: true,
-      store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        collectionName: "sessions",
-        ttl: 14 * 24 * 60 * 60, // 14 days
-        autoRemove: "native",
-      }),
-    })
-  )
-  // 2. Passport Middleware
-  .use(passport.initialize())
-  .use(passport.session())
+  // // 1. Session Middleware - Temporarily disabled for Part 1
+  // .use(
+  //   session({
+  //     secret: process.env.SESSION_SECRET,
+  //     resave: false,
+  //     saveUninitialized: true,
+  //     store: MongoStore.create({
+  //       mongoUrl: process.env.MONGODB_URI,
+  //       collectionName: "sessions",
+  //       ttl: 14 * 24 * 60 * 60, // 14 days
+  //       autoRemove: "native",
+  //     }),
+  //   })
+  // )
+  // // 2. Passport Middleware - Temporarily disabled for Part 1
+  // .use(passport.initialize())
+  // .use(passport.session())
   .use("/", require("./routes")); // Your routes middleware
 
 // Global error handler - must be last middleware
