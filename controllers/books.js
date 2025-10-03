@@ -1,80 +1,92 @@
-const { ObjectId } = require('mongodb');
-const Book = require('../models/bookModel');
+const { ObjectId } = require("mongodb");
+const { getDb } = require("../db/connect");
 
 const getAllBooks = async (req, res) => {
   try {
-    const books = await Book.find();
-    res.setHeader('Content-Type', 'application/json');
+    const books = await getDb().collection("books").find().toArray();
     res.status(200).json(books);
   } catch (err) {
-    console.error(err); // Log the full error for debugging
-    res.status(500).json({ message: 'An internal server error occurred.' });
+    res.status(500).json({ message: err.message });
   }
 };
 
 const getSingleBook = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: 'Invalid book ID format.' });
+      return res.status(400).json({ message: "Invalid book ID" });
     }
-    const book = await Book.findById(req.params.id);
-    if (book) {
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json(book);
-    } else {
-      res.status(404).json({ message: 'Book not found' });
-    }
+    const book = await getDb()
+      .collection("books")
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!book) return res.status(404).json({ message: "Book not found" });
+    res.status(200).json(book);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An internal server error occurred.' });
+    res.status(500).json({ message: err.message });
   }
 };
 
 const createBook = async (req, res) => {
+  const {
+    title,
+    author,
+    publicationYear,
+    isbn,
+    genre,
+    pages,
+    summary,
+    language,
+  } = req.body;
   try {
-    const newBook = new Book(req.body);
-    const savedBook = await newBook.save();
-    res.status(201).json({
-      message: 'Book created successfully',
-      bookId: savedBook._id
+    const result = await getDb().collection("books").insertOne({
+      title,
+      author,
+      publicationYear,
+      isbn,
+      genre,
+      pages,
+      summary,
+      language,
     });
+    res.status(201).json({ id: result.insertedId });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An internal server error occurred.' });
+    res.status(500).json({ message: err.message });
   }
 };
 
 const updateBook = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: 'Invalid book ID format.' });
+      return res.status(400).json({ message: "Invalid book ID" });
     }
-    const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (updatedBook) {
-      res.status(204).send();
-    } else {
-      res.status(404).json({ message: 'Book not found or data is the same' });
-    }
+    const bookId = new ObjectId(req.params.id);
+    const updateFields = req.body;
+    delete updateFields._id;
+
+    const result = await getDb()
+      .collection("books")
+      .updateOne({ _id: bookId }, { $set: updateFields });
+
+    if (result.matchedCount === 0)
+      return res.status(404).json({ message: "Book not found" });
+    res.status(204).send();
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An internal server error occurred.' });
+    res.status(500).json({ message: err.message });
   }
 };
 
 const deleteBook = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: 'Invalid book ID format.' });
+      return res.status(400).json({ message: "Invalid book ID" });
     }
-    const deletedBook = await Book.findByIdAndDelete(req.params.id);
-    if (deletedBook) {
-      res.status(204).send();
-    } else {
-      res.status(404).json({ message: 'Book not found' });
-    }
+    const result = await getDb()
+      .collection("books")
+      .deleteOne({ _id: new ObjectId(req.params.id) });
+    if (result.deletedCount === 0)
+      return res.status(404).json({ message: "Book not found" });
+    res.status(204).send();
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An internal server error occurred.' });
+    res.status(500).json({ message: err.message });
   }
 };
 

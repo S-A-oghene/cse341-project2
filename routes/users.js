@@ -1,37 +1,31 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { body } = require("express-validator");
 
-const usersController = require("../controllers/users");
-const validation = require("../middleware/validate");
+const usersController = require('../controllers/users');
+const { isAuthenticated } = require('../middleware/authenticate');
+const { userValidationRules, validate } = require('../middleware/validate');
 
-// Validation rules for creating/updating a user
-const userValidationRules = () => {
-  return [
-    body("username", "Username is required and must be a string")
-      .notEmpty()
-      .isString(),
-    body("email", "A valid email is required").notEmpty().isEmail(),
-    body("fullName", "Full name is required and must be a string")
-      .notEmpty()
-      .isString(),
-  ];
-};
+// Public routes
+router.get('/', usersController.getAllUsers);
+router.get('/:id', usersController.getSingleUser);
 
-router.get("/", usersController.getAllUsers);
-router.get("/:id", usersController.getSingleUser);
+// Protected routes with validation
 router.post(
-  "/",
+  '/',
+  isAuthenticated,
   userValidationRules(),
-  validation.handleValidation,
+  validate,
   usersController.createUser
 );
+
 router.put(
-  "/:id",
+  '/:id',
+  isAuthenticated,
   userValidationRules(),
-  validation.handleValidation,
+  validate,
   usersController.updateUser
 );
-router.delete("/:id", usersController.deleteUser);
+
+router.delete('/:id', isAuthenticated, usersController.deleteUser);
 
 module.exports = router;

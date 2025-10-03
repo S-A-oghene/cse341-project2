@@ -1,39 +1,45 @@
+const { getDb } = require("../db/connect");
 const { ObjectId } = require("mongodb");
-const getDb = require("../data/database").getDatabase;
 
-exports.getAllContacts = async (req, res) => {
+// GET all contacts
+const getAll = async (req, res) => {
   try {
-    const db = getDb();
-    const contacts = await db.db().collection("contacts").find().toArray();
-    res.status(200).json(contacts);
+    const result = await getDb().collection("contacts").find();
+    const lists = await result.toArray();
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(lists);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getSingleContact = async (req, res) => {
+// GET a single contact
+const getSingle = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: "Invalid contact ID" });
+      return res.status(400).json({ message: "Invalid contact ID format." });
     }
-    const db = getDb();
-    const contact = await db
-      .db()
+    const userId = new ObjectId(req.params.id);
+    const result = await getDb()
       .collection("contacts")
-      .findOne({ _id: new ObjectId(req.params.id) });
-    if (!contact) return res.status(404).json({ message: "Contact not found" });
-    res.status(200).json(contact);
+      .findOne({ _id: userId });
+
+    if (result) {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({ message: "Contact not found." });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.createContact = async (req, res) => {
+// POST (Create) a new contact
+const createContact = async (req, res) => {
   const { firstName, lastName, email, favoriteColor, birthday } = req.body;
   try {
-    const db = getDb();
-    const result = await db
-      .db()
+    const result = await getDb()
       .collection("contacts")
       .insertOne({ firstName, lastName, email, favoriteColor, birthday });
     res.status(201).json({ id: result.insertedId });
@@ -42,47 +48,52 @@ exports.createContact = async (req, res) => {
   }
 };
 
-exports.updateContact = async (req, res) => {
+// PUT (Update) a contact
+const updateContact = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid contact ID" });
     }
     const contactId = new ObjectId(req.params.id);
     const updateFields = req.body;
-
-    // Ensure there's something to update and remove the _id field if it was passed
     delete updateFields._id;
-    if (Object.keys(updateFields).length === 0) {
-      return res.status(400).json({ message: "No update data provided." });
-    }
 
-    const db = getDb();
-    const result = await db
-      .db()
+    const result = await getDb()
       .collection("contacts")
       .updateOne({ _id: contactId }, { $set: updateFields });
-    if (result.matchedCount === 0)
+
+    if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Contact not found" });
+    }
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.deleteContact = async (req, res) => {
+// DELETE a contact
+const deleteContact = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid contact ID" });
     }
-    const db = getDb();
-    const result = await db
-      .db()
+    const result = await getDb()
       .collection("contacts")
       .deleteOne({ _id: new ObjectId(req.params.id) });
-    if (result.deletedCount === 0)
+
+    if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Contact not found" });
+    }
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+module.exports = {
+  getAll,
+  getSingle,
+  createContact,
+  updateContact,
+  deleteContact,
 };

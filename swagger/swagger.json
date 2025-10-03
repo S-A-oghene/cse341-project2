@@ -1,18 +1,17 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
-    "title": "Contacts API",
+    "title": "CSE 341 Project API",
     "version": "1.0.0",
-    "description": "API for managing contacts"
+    "description": "API for managing contacts, users, and books."
   },
-  "servers": [
+  "host": "cse341-project2-s4wq.onrender.com",
+  "schemes": [
     {
-      "url": "https://cse341-project2-s4wq.onrender.com",
-      "description": "Production Server"
+      "https": "Production Server"
     },
     {
-      "url": "http://localhost:8080",
-      "description": "Local Development Server"
+      "http": "Local Development Server"
     }
   ],
   "paths": {
@@ -21,120 +20,130 @@
         "summary": "Get all contacts",
         "responses": {
           "200": {
-            "description": "List of contacts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Contact" }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
       "post": {
         "summary": "Create a new contact",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Contact" }
-            }
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Contact" }
           }
-        },
+        ],
         "responses": {
           "201": {
-            "description": "Contact created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string" }
-                  }
-                }
-              }
-            }
+            "description": "Created"
           }
         }
       }
     },
     "/contacts/{id}": {
       "get": {
-        "summary": "Get contact by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
+        "summary": "Get a single contact by ID",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }],
         "responses": {
           "200": {
-            "description": "Contact found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Contact" }
-              }
-            }
-          },
-          "404": { "description": "Contact not found" }
+            "description": "OK"
+          }
         }
       },
       "put": {
         "summary": "Update a contact",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/Contact" } }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Contact" }
-            }
-          }
-        },
         "responses": {
-          "204": { "description": "Contact updated" },
-          "404": { "description": "Contact not found" }
+          "204": { "description": "No Content" }
         }
       },
       "delete": {
         "summary": "Delete a contact",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }],
         "responses": {
-          "204": { "description": "Contact deleted" },
-          "404": { "description": "Contact not found" }
+          "204": { "description": "No Content" }
         }
       }
+    },
+    "/users": {
+      "get": { "summary": "Get all users", "responses": { "200": { "description": "OK" } } },
+      "post": {
+        "summary": "Create a new user",
+        "parameters": [{ "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/User" } }],
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/users/{id}": {
+      "get": { "summary": "Get a single user by ID", "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }], "responses": { "200": { "description": "OK" } } },
+      "put": {
+        "summary": "Update a user by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/User" } }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "delete": { "summary": "Delete a user by ID", "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }], "responses": { "204": { "description": "No Content" } } }
+    },
+    "/books": {
+      "get": { "summary": "Get all books", "responses": { "200": { "description": "OK" } } },
+      "post": {
+        "summary": "Create a new book",
+        "parameters": [{ "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/Book" } }],
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/books/{id}": {
+      "get": { "summary": "Get a single book by ID", "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }], "responses": { "200": { "description": "OK" } } },
+      "put": {
+        "summary": "Update a book by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/Book" } }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "delete": { "summary": "Delete a book by ID", "parameters": [{ "name": "id", "in": "path", "required": true, "type": "string" }], "responses": { "204": { "description": "No Content" } } }
     }
   },
-  "components": {
-    "schemas": {
-      "Contact": {
-        "type": "object",
-        "properties": {
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "email": { "type": "string" },
-          "favoriteColor": { "type": "string" },
-          "birthday": { "type": "string" }
-        },
-        "required": ["firstName", "lastName", "email", "favoriteColor", "birthday"]
+  "definitions": {
+    "Contact": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string", "example": "John" },
+        "lastName": { "type": "string", "example": "Doe" },
+        "email": { "type": "string", "example": "john.doe@example.com" },
+        "favoriteColor": { "type": "string", "example": "Blue" },
+        "birthday": { "type": "string", "format": "date", "example": "1990-01-15" }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "example": "johndoe90" },
+        "email": { "type": "string", "example": "john.d@example.com" },
+        "fullName": { "type": "string", "example": "Johnathan Doe" },
+        "firstName": { "type": "string", "example": "Johnathan" },
+        "lastName": { "type": "string", "example": "Doe" },
+        "favoriteColor": { "type": "string", "example": "Green" },
+        "birthday": { "type": "string", "format": "date", "example": "1990-01-15" }
+      }
+    },
+    "Book": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "example": "The Great Gatsby" },
+        "author": { "type": "string", "example": "F. Scott Fitzgerald" },
+        "publicationYear": { "type": "integer", "example": 1925 },
+        "isbn": { "type": "string", "example": "978-0743273565" },
+        "genre": { "type": "string", "example": "Fiction" },
+        "pages": { "type": "integer", "example": 180 },
+        "summary": { "type": "string", "example": "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan." },
+        "language": { "type": "string", "example": "English" }
       }
     }
   }
