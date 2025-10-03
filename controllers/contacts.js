@@ -48,12 +48,12 @@ exports.updateContact = async (req, res) => {
       return res.status(400).json({ message: "Invalid contact ID" });
     }
     const contactId = new ObjectId(req.params.id);
-    const updateFields = { ...req.body };
+    const updateFields = req.body;
 
     // Ensure there's something to update and remove the _id field if it was passed
     delete updateFields._id;
     if (Object.keys(updateFields).length === 0) {
-      return res.status(400).json({ message: "No fields to update provided." });
+      return res.status(400).json({ message: "No update data provided." });
     }
 
     const db = getDb();
