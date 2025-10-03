@@ -3,7 +3,7 @@ const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
 const cors = require("cors"); // Use CORS for cross-origin requests
-const connectDB = require("./db/connect");
+const { connectDB } = require("./db/connect");
 
 // This line executes the passport configuration
 require("./auth/passport-setup");
