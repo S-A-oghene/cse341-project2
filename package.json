@@ -21,6 +21,7 @@
   "homepage": "https://github.com/S-A-oghene/cse341#readme",
   "dependencies": {
     "dotenv": "^17.2.0",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "express-validator": "^7.2.1",

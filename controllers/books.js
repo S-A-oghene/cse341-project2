@@ -62,6 +62,11 @@ const updateBook = async (req, res) => {
     const updateFields = req.body;
     delete updateFields._id;
 
+    // Prevent empty updates
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: "No update data provided." });
+    }
+
     const result = await getDb()
       .collection("books")
       .updateOne({ _id: bookId }, { $set: updateFields });
