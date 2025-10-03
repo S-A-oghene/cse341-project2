@@ -1,13 +1,6 @@
 const { ObjectId } = require("mongodb");
 const getDb = require("../data/database").getDatabase;
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Retrieves all contacts from the database.
- * @returns {Promise} A promise that resolves to an array of contacts objects.
- * @throws {Error} If there is an error with the database query.
- */
-/*******  df6a3768-5d53-44fc-8bc7-459315f1f307  *******/
 exports.getAllContacts = async (req, res) => {
   try {
     const db = getDb();
@@ -37,9 +30,6 @@ exports.getSingleContact = async (req, res) => {
 
 exports.createContact = async (req, res) => {
   const { firstName, lastName, email, favoriteColor, birthday } = req.body;
-  if (!firstName || !lastName || !email || !favoriteColor || !birthday) {
-    return res.status(400).json({ message: "All fields required" });
-  }
   try {
     const db = getDb();
     const result = await db
