@@ -2,6 +2,18 @@ const { body, validationResult } = require("express-validator");
 
 const userValidationRules = () => {
   return [
+    body("username").isString().notEmpty().withMessage("Username is required."),
+    body("email").isEmail().withMessage("A valid email is required."),
+    body("fullName")
+      .isString()
+      .notEmpty()
+      .withMessage("Full name is required."),
+  ];
+};
+
+// Renaming for clarity, as this is used for the contacts collection
+const contactValidationRules = () => {
+  return [
     body("firstName")
       .isString()
       .notEmpty()
@@ -56,6 +68,7 @@ const validate = (req, res, next) => {
 
 module.exports = {
   userValidationRules,
-  bookValidationRules,
+  contactValidationRules, // Exporting the renamed rules
+  bookValidationRules, // Keeping book rules as they are
   validate,
 };

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const contactsController = require("../controllers/contacts");
 const { isAuthenticated } = require("../middleware/authenticate");
-const { userValidationRules, validate } = require("../middleware/validate");
+const { contactValidationRules, validate } = require("../middleware/validate");
 
 router.get("/", contactsController.getAll);
 router.get("/:id", contactsController.getSingle);
@@ -12,14 +12,14 @@ router.get("/:id", contactsController.getSingle);
 router.post(
   "/",
   isAuthenticated,
-  userValidationRules(),
+  contactValidationRules(),
   validate,
   contactsController.createContact
 );
 router.put(
   "/:id",
   isAuthenticated,
-  userValidationRules(),
+  contactValidationRules(),
   validate,
   contactsController.updateContact
 );

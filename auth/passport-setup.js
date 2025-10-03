@@ -1,51 +1,39 @@
-const passport = require('passport');
-const GitHubStrategy = require('passport-github2').Strategy;
-const AuthUser = require('../models/authUserModel');
-
-passport.serializeUser((user, done) => {
-  // The user.id here is the MongoDB document _id
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await AuthUser.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
+const passport = require("passport");
+const GitHubStrategy = require("passport-github2").Strategy;
+const { getDb } = require("../db/connect");
+const { ObjectId } = require("mongodb");
+const { findOrCreate } = require("../models/authUserModel");
 
 passport.use(
   new GitHubStrategy(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: `${process.env.APP_BASE_URL}/auth/github/callback`
+      callbackURL: process.env.GITHUB_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
-      // This function is called after the user authorizes your app on GitHub
       try {
-        // Check if user already exists in your DB
-        let user = await AuthUser.findOne({ githubId: profile.id });
-
-        if (user) {
-          // If user exists, return the user
-          return done(null, user);
-       } else {
-          // If not, create a new user in your DB for authentication purposes
-         const newUser = new AuthUser({
-           githubId: profile.id,
-           username: profile.username,
-           displayName: profile.displayName,
-           email: profile.emails ? profile.emails[0].value : null
-         });
-         await newUser.save();
-         return done(null, newUser);
-       }
-     } catch (err) {
-       return done(err, null);
-     }
-   }
- )
+        const user = await findOrCreate(profile);
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const db = getDb();
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
