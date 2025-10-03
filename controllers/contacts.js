@@ -1,38 +1,98 @@
-const { getDb } = require("../db/connect");
 const { ObjectId } = require("mongodb");
+const getDb = require("../data/database").getDatabase;
 
-// GET all contacts
-const getAll = async (req, res) => {
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Retrieves all contacts from the database.
+ * @returns {Promise} A promise that resolves to an array of contacts objects.
+ * @throws {Error} If there is an error with the database query.
+ */
+/*******  df6a3768-5d53-44fc-8bc7-459315f1f307  *******/
+exports.getAllContacts = async (req, res) => {
   try {
-    const result = await getDb().collection("contacts").find();
-    const lists = await result.toArray();
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).json(lists);
+    const db = getDb();
+    const contacts = await db.db().collection("contacts").find().toArray();
+    res.status(200).json(contacts);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// GET a single contact
-const getSingle = async (req, res) => {
+exports.getSingleContact = async (req, res) => {
   try {
     if (!ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: "Invalid contact ID format." });
+      return res.status(400).json({ message: "Invalid contact ID" });
     }
-    const userId = new ObjectId(req.params.id);
-    const result = await getDb()
+    const db = getDb();
+    const contact = await db
+      .db()
       .collection("contacts")
-      .findOne({ _id: userId });
-
-    if (result) {
-      res.setHeader("Content-Type", "application/json");
-      res.status(200).json(result);
-    } else {
-      res.status(404).json({ message: "Contact not found." });
-    }
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!contact) return res.status(404).json({ message: "Contact not found" });
+    res.status(200).json(contact);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = { getAll, getSingle };
+exports.createContact = async (req, res) => {
+  const { firstName, lastName, email, favoriteColor, birthday } = req.body;
+  if (!firstName || !lastName || !email || !favoriteColor || !birthday) {
+    return res.status(400).json({ message: "All fields required" });
+  }
+  try {
+    const db = getDb();
+    const result = await db
+      .db()
+      .collection("contacts")
+      .insertOne({ firstName, lastName, email, favoriteColor, birthday });
+    res.status(201).json({ id: result.insertedId });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateContact = async (req, res) => {
+  try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid contact ID" });
+    }
+    const contactId = new ObjectId(req.params.id);
+    const updateFields = { ...req.body };
+
+    // Ensure there's something to update and remove the _id field if it was passed
+    delete updateFields._id;
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: 'No fields to update provided.' });
+    }
+
+    const db = getDb();
+    const result = await db
+      .db()
+      .collection("contacts")
+      .updateOne({ _id: contactId }, { $set: updateFields });
+    if (result.matchedCount === 0)
+      return res.status(404).json({ message: "Contact not found" });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.deleteContact = async (req, res) => {
+  try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid contact ID" });
+    }
+    const db = getDb();
+    const result = await db
+      .db()
+      .collection("contacts")
+      .deleteOne({ _id: new ObjectId(req.params.id) });
+    if (result.deletedCount === 0)
+      return res.status(404).json({ message: "Contact not found" });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
